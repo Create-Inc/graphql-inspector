@@ -1,3 +1,4 @@
+import fs from 'fs';
 import Dataloader from 'dataloader';
 import { buildClientSchema, getIntrospectionQuery, printSchema, Source } from 'graphql';
 import yaml from 'js-yaml';
@@ -181,15 +182,20 @@ export function createConfigLoader(
 export async function printSchemaFromEndpoint(endpoint: Endpoint) {
   const config = parseEndpoint(endpoint);
 
-  const response = await fetch(config.url, {
-    method: config.method,
-    headers: config.headers,
-    body: JSON.stringify({
-      query: getIntrospectionQuery().replace(/\s+/g, ' ').trim(),
-    }),
-  });
+  let data;
+  if (config.type === 'url') {
+    const response = await fetch(config.url, {
+      method: config.method,
+      headers: config.headers,
+      body: JSON.stringify({
+        query: getIntrospectionQuery().replace(/\s+/g, ' ').trim(),
+      }),
+    });
 
-  const { data } = await response.json();
+    ({ data } = await response.json());
+  } else {
+    data = await fs.promises.readFile(config.path, 'utf-8');
+  }
 
   const introspection = data;
 

@@ -101,21 +101,35 @@ export function isNil(val: any): val is undefined | null {
   return !val && typeof val !== 'boolean';
 }
 
-export function parseEndpoint(endpoint: Endpoint): {
-  url: string;
-  method: 'GET' | 'get' | 'post' | 'POST';
-  headers?: {
-    [name: string]: string;
-  };
-} {
+export function parseEndpoint(endpoint: Endpoint):
+  | {
+      type: 'file';
+      path: string;
+    }
+  | {
+      type: 'url';
+      url: string;
+      method: 'GET' | 'get' | 'post' | 'POST';
+      headers?: {
+        [name: string]: string;
+      };
+    } {
   if (typeof endpoint === 'string') {
+    if (endpoint.startsWith('http')) {
+      return {
+        type: 'url',
+        url: endpoint,
+        method: 'POST',
+      };
+    }
     return {
-      url: endpoint,
-      method: 'POST',
+      type: 'file',
+      path: endpoint,
     };
   }
 
   return {
+    type: 'url',
     url: endpoint.url,
     method: endpoint.method || 'POST',
     headers: endpoint.headers,
