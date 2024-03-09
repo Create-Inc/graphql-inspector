@@ -3,6 +3,7 @@ import Dataloader from 'dataloader';
 import { buildClientSchema, getIntrospectionQuery, printSchema, Source } from 'graphql';
 import yaml from 'js-yaml';
 import * as probot from 'probot';
+import * as core from '@actions/core';
 import { fetch } from '@whatwg-node/fetch';
 import { Endpoint, NormalizedEnvironment, SchemaPointer } from './config.js';
 import { isNil, objectFromEntries, parseEndpoint } from './utils.js';
@@ -183,8 +184,10 @@ export async function printSchemaFromEndpoint(endpoint: Endpoint) {
   const config = parseEndpoint(endpoint);
 
   if (config.type === 'file') {
+    core.info(`Using file: ${config.path}`);
     return fs.promises.readFile(config.path, 'utf-8');
   }
+  core.info(`Using url: ${config.url}`);
   const response = await fetch(config.url, {
     method: config.method,
     headers: config.headers,

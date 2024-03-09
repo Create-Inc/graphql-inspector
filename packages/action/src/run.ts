@@ -123,6 +123,7 @@ export async function run() {
 
   if (endpoint) {
     schemaPath = schemaPointer;
+    core.info(`Using endpoint: ${schemaPath}`);
   }
 
   const isNewSchemaUrl = endpoint && schemaPath.startsWith('http');
