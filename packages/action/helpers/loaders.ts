@@ -182,20 +182,18 @@ export function createConfigLoader(
 export async function printSchemaFromEndpoint(endpoint: Endpoint) {
   const config = parseEndpoint(endpoint);
 
-  let data;
-  if (config.type === 'url') {
-    const response = await fetch(config.url, {
-      method: config.method,
-      headers: config.headers,
-      body: JSON.stringify({
-        query: getIntrospectionQuery().replace(/\s+/g, ' ').trim(),
-      }),
-    });
-
-    ({ data } = await response.json());
-  } else {
-    data = await fs.promises.readFile(config.path, 'utf-8');
+  if (config.type === 'file') {
+    return fs.promises.readFile(config.path, 'utf-8');
   }
+  const response = await fetch(config.url, {
+    method: config.method,
+    headers: config.headers,
+    body: JSON.stringify({
+      query: getIntrospectionQuery().replace(/\s+/g, ' ').trim(),
+    }),
+  });
+
+  const { data } = await response.json();
 
   const introspection = data;
 
