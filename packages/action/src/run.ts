@@ -123,10 +123,7 @@ export async function run() {
 
   if (endpoint) {
     schemaPath = schemaPointer;
-    core.info(`Using endpoint: ${schemaPath}`);
   }
-
-  const isNewSchemaUrl = endpoint && schemaPath.startsWith('http');
 
   const [oldFile, newFile] = await Promise.all([
     endpoint
@@ -135,13 +132,7 @@ export async function run() {
           ref: schemaRef,
           path: schemaPath,
         }),
-    isNewSchemaUrl
-      ? printSchemaFromEndpoint(schemaPath)
-      : loadFile({
-          path: schemaPath,
-          ref,
-          workspace,
-        }),
+    printSchemaFromEndpoint(schemaPath),
   ]);
 
   core.info('Got both sources');
@@ -205,7 +196,7 @@ export async function run() {
     conclusion = CheckConclusion.Success;
   }
 
-  if (useAnnotations === false || isNewSchemaUrl) {
+  if (useAnnotations === false) {
     core.info(`Anotations are disabled. Skipping annotations...`);
     annotations = [];
   }
