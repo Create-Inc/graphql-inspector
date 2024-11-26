@@ -1,6 +1,7 @@
 import { withGuildDocs } from '@theguild/components/next.config';
 
 export default withGuildDocs({
+  output: 'export',
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -20,6 +21,7 @@ export default withGuildDocs({
       '/docs/essentials/validate': '/docs/commands/validate',
       '/docs/essentials/similar': '/docs/commands/similar',
       '/docs/essentials/audit': '/docs/commands/audit',
+      '/docs/essentials/introspect': '/docs/commands/introspect',
     }).map(([from, to]) => ({
       source: from,
       destination: to,
